@@ -13,17 +13,21 @@ mongoose.connect('mongodb+srv://heslodomongodb:heslodomongodb@cluster0.eehxpgw.m
   .catch(err => console.error('Chyba připojení k MongoDB:', err));
 
 //SCHÉMATA A MODELY
+
+
 const insuredSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  address: String,
-  email: String,
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  street: String,
+  city: String,
+  postalCode: String,
+  email: { type: String, required: true, unique: true },
   phone: String,
   insurances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' }]
 });
 
 const insuranceTypeSchema = new mongoose.Schema({
-  name: String // Název typu pojištění (např. "Pojištění majetku")
+  name: { type: String, required: true, unique: true } // Název typu pojištění (např. "Pojištění majetku")
 });
 
 const insuranceSchema = new mongoose.Schema({
