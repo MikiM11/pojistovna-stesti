@@ -13,8 +13,7 @@ mongoose.connect('mongodb+srv://heslodomongodb:heslodomongodb@cluster0.eehxpgw.m
   .catch(err => console.error('Chyba připojení k MongoDB:', err));
 
 //SCHÉMATA A MODELY
-
-
+//schéma pro pojištěnce
 const insuredSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -23,13 +22,15 @@ const insuredSchema = new mongoose.Schema({
   postalCode: String,
   email: { type: String, required: true, unique: true },
   phone: String,
-  insurances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' }]
+  insurances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' }] // Reference na pojištění
 });
 
+//schéma pro typ pojištění
 const insuranceTypeSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true } // Název typu pojištění (např. "Pojištění majetku")
 });
 
+//schéma pro konkrétní pojistku
 const insuranceSchema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'InsuranceType' }, // Reference na typ pojištění
   amount: Number,
@@ -43,7 +44,7 @@ const Insured = mongoose.model('Insured', insuredSchema);
 const Insurance = mongoose.model('Insurance', insuranceSchema);
 const InsuranceType = mongoose.model('InsuranceType', insuranceTypeSchema);
 
-// Endpointy pro pojištěnce (CRUD)
+// Endpointy pro pojištěnce
 app.get('/api/insureds', async (req, res) => {
   try {
     const insureds = await Insured.find();
