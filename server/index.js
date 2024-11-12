@@ -34,7 +34,7 @@ const insuranceTypeSchema = new mongoose.Schema({
 const insuranceSchema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'InsuranceType' }, // Reference na typ pojištění
   amount: Number,
-  insured: { type: mongoose.Schema.Types.ObjectId, ref: 'Insured' },
+  insured: { type: mongoose.Schema.Types.ObjectId, ref: 'Insured' }, // Reference na pojištěnce
   subject: String, // Předmět pojištění
   validFrom: Date, // Platnost od
   validTo: Date  // Platnost do
@@ -100,7 +100,7 @@ app.delete('/api/insureds/:id', async (req, res) => {
   }
 });
 
-// Endpointy pro pojištění (CRUD)
+// Endpointy pro pojištění 
 app.get('/api/insurances', async (req, res) => {
   try {
     const insurances = await Insurance.find().populate('insured').populate('type');
@@ -156,7 +156,7 @@ app.delete('/api/insurances/:id', async (req, res) => {
   }
 });
 
-// Endpointy pro typy pojištění (CRUD)
+// Endpointy pro typy pojištění
 app.get('/api/insuranceTypes', async (req, res) => {
   try {
     const insuranceTypes = await InsuranceType.find();
