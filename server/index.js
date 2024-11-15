@@ -8,6 +8,7 @@ const PORT = 3001;
 app.use(express.json());
 
 //PŘIPOJENÍ K MONGODB
+//beží na MongoDB Atlas
 mongoose.connect('mongodb+srv://heslodomongodb:heslodomongodb@cluster0.eehxpgw.mongodb.net/insuranceDB')
   .then(() => console.log('Připojeno k MongoDB'))
   .catch(err => console.error('Chyba připojení k MongoDB:', err));
@@ -15,36 +16,39 @@ mongoose.connect('mongodb+srv://heslodomongodb:heslodomongodb@cluster0.eehxpgw.m
 //SCHÉMATA A MODELY
 //schéma pro pojištěnce
 const insuredSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  street: String,
-  city: String,
-  postalCode: String,
-  email: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true }, //Jméno
+  lastName: { type: String, required: true },//Příjmení
+  street: String, //Ulice
+  city: String, //Město
+  postalCode: String, //PSČ
+  email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ }, // Validace e-mailu
   phone: String,
   insurances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' }] // Reference na pojištění
 });
 
 //schéma pro typ pojištění
 const insuranceTypeSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true } // Název typu pojištění (např. "Pojištění majetku")
+  name: { type: String, required: true, unique: true } // Název typu pojištění (např. "Pojištění vozidla")
 });
 
 //schéma pro konkrétní pojistku
 const insuranceSchema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'InsuranceType' }, // Reference na typ pojištění
-  amount: Number,
+  amount: {type: Number, required: true}, // Pojištěná částka
   insured: { type: mongoose.Schema.Types.ObjectId, ref: 'Insured' }, // Reference na pojištěnce
-  subject: String, // Předmět pojištění
-  validFrom: Date, // Platnost od
-  validTo: Date  // Platnost do
+  subject: {type: String, required: true}, // Předmět pojištění - např. "Byt"
+  validFrom: {type: Date, required: true}, // Platnost od
+  validTo: {type: Date, required: true},  // Platnost do
 });
 
 const Insured = mongoose.model('Insured', insuredSchema);
 const Insurance = mongoose.model('Insurance', insuranceSchema);
 const InsuranceType = mongoose.model('InsuranceType', insuranceTypeSchema);
 
+//ENDPOINTY API
 // Endpointy pro pojištěnce
+
+// Vrátí všechny pojištěnce
 app.get('/api/insureds', async (req, res) => {
   try {
     const insureds = await Insured.find();
@@ -54,6 +58,7 @@ app.get('/api/insureds', async (req, res) => {
   }
 });
 
+// Vrátí pojištěnce podle ID
 app.get('/api/insureds/:id', async (req, res) => {
   try {
     const insured = await Insured.findById(req.params.id).populate('insurances');
@@ -66,6 +71,7 @@ app.get('/api/insureds/:id', async (req, res) => {
   }
 });
 
+// Vytvoří nového pojištěnce
 app.post('/api/insureds', async (req, res) => {
   const insured = new Insured(req.body);
   try {
@@ -76,9 +82,10 @@ app.post('/api/insureds', async (req, res) => {
   }
 });
 
+// Aktualizuje pojištěnce podle ID
 app.put('/api/insureds/:id', async (req, res) => {
   try {
-    const updatedInsured = await Insured.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedInsured = await Insured.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (updatedInsured == null) {
       return res.status(404).json({ message: 'Pojištěnec nenalezen' });
     }
@@ -88,6 +95,7 @@ app.put('/api/insureds/:id', async (req, res) => {
   }
 });
 
+// Smaže pojištěnce podle ID
 app.delete('/api/insureds/:id', async (req, res) => {
   try {
     const deletedInsured = await Insured.findByIdAndDelete(req.params.id);
@@ -101,6 +109,8 @@ app.delete('/api/insureds/:id', async (req, res) => {
 });
 
 // Endpointy pro pojištění 
+
+// Vrátí všechny pojistky
 app.get('/api/insurances', async (req, res) => {
   try {
     const insurances = await Insurance.find().populate('insured').populate('type');
@@ -110,6 +120,7 @@ app.get('/api/insurances', async (req, res) => {
   }
 });
 
+// Vrátí pojistku podle ID
 app.get('/api/insurances/:id', async (req, res) => {
   try {
     const insurance = await Insurance.findById(req.params.id).populate('insured').populate('type');
@@ -122,6 +133,7 @@ app.get('/api/insurances/:id', async (req, res) => {
   }
 });
 
+// Vytvoří novou pojistku
 app.post('/api/insurances', async (req, res) => {
   const insurance = new Insurance(req.body);
   try {
@@ -132,9 +144,10 @@ app.post('/api/insurances', async (req, res) => {
   }
 });
 
+// Aktualizuje pojistku podle ID
 app.put('/api/insurances/:id', async (req, res) => {
   try {
-    const updatedInsurance = await Insurance.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedInsurance = await Insurance.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (updatedInsurance == null) {
       return res.status(404).json({ message: 'Pojištění nenalezeno' });
     }
@@ -144,6 +157,7 @@ app.put('/api/insurances/:id', async (req, res) => {
   }
 });
 
+// Smaže pojistku podle ID
 app.delete('/api/insurances/:id', async (req, res) => {
   try {
     const deletedInsurance = await Insurance.findByIdAndDelete(req.params.id);
@@ -157,6 +171,8 @@ app.delete('/api/insurances/:id', async (req, res) => {
 });
 
 // Endpointy pro typy pojištění
+
+// Vrátí všechny typy pojištění
 app.get('/api/insuranceTypes', async (req, res) => {
   try {
     const insuranceTypes = await InsuranceType.find();
@@ -166,6 +182,7 @@ app.get('/api/insuranceTypes', async (req, res) => {
   }
 });
 
+// Vrátí typ pojištění podle ID
 app.get('/api/insuranceTypes/:id', async (req, res) => {
   try {
     const insuranceType = await InsuranceType.findById(req.params.id);
@@ -178,6 +195,7 @@ app.get('/api/insuranceTypes/:id', async (req, res) => {
   }
 });
 
+// Vytvoří nový typ pojištění
 app.post('/api/insuranceTypes', async (req, res) => {
   const insuranceType = new InsuranceType(req.body);
   try {
@@ -188,9 +206,10 @@ app.post('/api/insuranceTypes', async (req, res) => {
   }
 });
 
+// Aktualizuje typ pojištění podle ID
 app.put('/api/insuranceTypes/:id', async (req, res) => {
   try {
-    const updatedInsuranceType = await InsuranceType.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedInsuranceType = await InsuranceType.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (updatedInsuranceType == null) {
       return res.status(404).json({ message: 'Typ pojištění nenalezen' });
     }
@@ -200,6 +219,7 @@ app.put('/api/insuranceTypes/:id', async (req, res) => {
   }
 });
 
+// Smaže typ pojištění podle ID
 app.delete('/api/insuranceTypes/:id', async (req, res) => {
   try {
     const deletedInsuranceType = await InsuranceType.findByIdAndDelete(req.params.id);
