@@ -1,6 +1,7 @@
 //API PRO SPRÁVU POJIŠTĚNÍ - SERVEROVÁ ČÁST
 
 const express = require("express");
+const cors = require('cors'); // Import cors
 const mongoose = require("mongoose");
 
 const app = express();
@@ -8,6 +9,7 @@ const PORT = 3001;
 
 // Parsuje JSON data z requestů
 app.use(express.json());
+app.use(cors()); // Použití cors middleware
 
 //PŘIPOJENÍ K MONGODB
 //beží na MongoDB Atlas
