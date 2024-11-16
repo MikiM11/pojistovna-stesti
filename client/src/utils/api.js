@@ -13,4 +13,4 @@ export async function apiGet(endpoint) {
     }
   };
 
-  // ! možá doplnit parametry pro URL
+  // TODO možná doplnit parametry pro URL

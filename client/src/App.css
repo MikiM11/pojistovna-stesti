@@ -1,0 +1,16 @@
+/* Barvy */
+.navbar-light .navbar-nav .nav-link {
+    color: #007bff; /* modrá */
+  }
+  
+  .navbar-light .navbar-nav .nav-link.active,
+  .navbar-light .navbar-nav .nav-link:hover {
+    color: #ffc107; /* oranžová */
+  }
+  
+  /* Sticky navigace */
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+  }
