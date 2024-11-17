@@ -46,6 +46,7 @@ footer {
   padding: 1rem;
   justify-content: space-between;
   color: white;
+  text-shadow: 2px 2px 5px #d27422;
 }
 
 .page-header h1 {
