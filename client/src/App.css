@@ -1,16 +1,60 @@
 /* Barvy */
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper { /* Obalení obsahu stránky */
+  flex: 1;
+}
+
+footer {
+  background-color: #f8f9fa; /* světle šedá */
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
 .navbar-light .navbar-nav .nav-link {
-    color: #007bff; /* modrá */
-  }
-  
-  .navbar-light .navbar-nav .nav-link.active,
-  .navbar-light .navbar-nav .nav-link:hover {
-    color: #ffc107; /* oranžová */
-  }
-  
-  /* Sticky navigace */
-  .sticky-top {
-    position: sticky;
-    top: 0;
-    z-index: 1020;
-  }
+  color: #007bff; /* modrá */
+}
+
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #ffc107; /* oranžová */
+}
+
+/* Sticky navigace */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.page-header {
+  display: flex;
+  align-items: center; 
+  background-color: #ffc107; 
+  padding: 1rem;
+  justify-content: space-between;
+  color: white;
+}
+
+.page-header h1 {
+  margin: 0; 
+  order: 1;
+}
+
+.page-header i {
+  font-size: 2rem;
+  margin-right: 1rem; 
+  order: 2;
+}
