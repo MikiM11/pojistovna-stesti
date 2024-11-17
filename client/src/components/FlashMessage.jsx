@@ -7,3 +7,5 @@ export function FlashMessage({ message, type }) {
     </div>
   );
 }
+
+export default FlashMessage;

@@ -6,14 +6,17 @@ function InsuredList() {
   const [insureds, setInsureds] = useState([]);
   const [error, setError] = useState(null); // State pro chybovou hlášku
   const [selectedInsuredId, setSelectedInsuredId] = useState(null); // State pro vybraného pojištěnce
+  const [isLoading, setIsLoading] = useState(true); // State pro nacítání dat - zobrazení spineru
 
   useEffect(() => {
     const loadInsureds = async () => {
       try {
         const data = await apiGet("insureds");
         setInsureds(data);
+        setIsLoading(false); // Skrytí spineru
       } catch (error) {
-        setError("Nepodařilo se načíst data. ...asi vítr...🤷🏻‍♂️"); // Uložení chyby do state
+        setError("Chyba načítání dat. ...asi vítr... 🤷🏻‍♂️"); // Uložení chyby do state
+        setIsLoading(false); // Skrytí spineru
       }
     };
 
@@ -26,6 +29,15 @@ function InsuredList() {
 
   return (
     <div>
+      {isLoading && (
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Načítání...</span>
+            </div>
+          </div>
+      )
+        }
+
       {error && ( // Pokud existuje chyba
         <FlashMessage message={error} type="danger" /> // Zobrazení chybové hlášky
       )}

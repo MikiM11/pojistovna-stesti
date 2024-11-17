@@ -30,7 +30,7 @@ function App() {
       </div>
       <footer className="footer mt-4">
         <div className="container">
-          <p>&copy; 2023 Pojišťovna Štěstí</p>
+          <p>&copy; 2024 Pojišťovna Štěstí &amp; Miki</p>
         </div>
       </footer>
     </div>
