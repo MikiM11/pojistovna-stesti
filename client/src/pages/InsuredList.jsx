@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro zobrazení chybové hlášky
+import { Spinner } from "../components/Spinner"; // Import komponenty pro zobrazení spineru
 import { apiGet } from "../utils/api"; // importování funkce pro načítání dat z API
 
 function InsuredList() {
@@ -30,11 +31,7 @@ function InsuredList() {
   return (
     <div>
       {isLoading && (
-          <div className="d-flex justify-content-center">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">Načítání...</span>
-            </div>
-          </div>
+          <Spinner /> // Zobrazení spineru při načítání dat
       )
         }
 

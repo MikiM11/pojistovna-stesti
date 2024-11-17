@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InsuredList from "./pages/InsuredList";
+import InsuranceList from "./pages/InsuranceList";
 import Navigation from "./components/Navigation"; // Import navigace
 import "./App.css";
 
@@ -25,7 +26,14 @@ function App() {
               <InsuredList />
             </div>
           )}
-          {/* ... další stránky */}
+          {
+            activePage === "insurances" && (
+              <div>
+                <h1>Seznam pojištění</h1>
+                <InsuranceList />
+              </div>
+            )
+          }
         </div>
       </div>
       <footer className="footer mt-4">
