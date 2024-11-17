@@ -9,7 +9,7 @@ function InsuranceList() {
   const [selectedInsuranceId, setSelectedInsuranceId] = useState(null); // State pro vybrané pojištění
   const [isLoading, setIsLoading] = useState(true); // State pro indikaci načítání
 
-  // Funkce pro načítání pojištění
+  // Funkce pro načítání seznamu pojištění
   useEffect(() => {
     const loadInsurances = async () => {
         try {
