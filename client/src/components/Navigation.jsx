@@ -28,6 +28,16 @@ const Navigation = () => {
               Seznam pojištění
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to="/typ-pojisteni"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              Typy pojištění
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

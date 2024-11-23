@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import InsuredList from "./pages/InsuredList";
 import InsuranceList from "./pages/InsuranceList";
+import InsuranceType from "./pages/InsuranceType";
 import Navigation from "./components/Navigation";
 import "./App.css";
 
@@ -37,6 +38,15 @@ function App() {
                 }
               />
               {/* Můžeme přidat další cesty */}
+              <Route
+                path="/typ-pojisteni"
+                element={
+                  <div>
+                    <h1>Typy pojištění</h1>
+                    <InsuranceType />
+                  </div>
+                }
+              />
               <Route
                 path="*"
                 element={
