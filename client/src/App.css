@@ -1,4 +1,4 @@
-/* Barvy */
+/* Barvy a základní rozvržení */
 body {
   display: flex;
   min-height: 100vh;
@@ -16,22 +16,6 @@ body {
   flex: 1;
 }
 
-footer {
-  background-color: #f8f9fa; /* světle šedá */
-  padding: 1rem;
-  text-align: center;
-  margin-top: auto;
-}
-
-.navbar-light .navbar-nav .nav-link {
-  color: #007bff; /* modrá */
-}
-
-.navbar-light .navbar-nav .nav-link.active,
-.navbar-light .navbar-nav .nav-link:hover {
-  color: #ffc107; /* oranžová */
-}
-
 /* Sticky navigace */
 .sticky-top {
   position: sticky;
@@ -39,6 +23,7 @@ footer {
   z-index: 1020;
 }
 
+/* Hlavička stránky */
 .page-header {
   display: flex;
   align-items: center; 
@@ -51,11 +36,36 @@ footer {
 
 .page-header h1 {
   margin: 0; 
-  order: 1;
 }
 
 .page-header i {
   font-size: 2rem;
   margin-right: 1rem; 
-  order: 2;
+}
+
+.nav-link {
+  color: #007bff;
+  font-weight: normal;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.nav-link.active {
+  color: #ffc107!important;
+  font-weight: bold !important;
+  background-color: #f8f9fa !important;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+
+.nav-link:hover {
+  color: #ffc107;
+  text-decoration: none;
+}
+
+footer {
+  background-color: #f8f9fa; /* světle šedá */
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
 }
