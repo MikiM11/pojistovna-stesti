@@ -6,9 +6,8 @@ const Navigation = () => {
     <nav className="navbar navbar-expand-lg bg-light">
       <div className="container">
         <ul className="navbar-nav me-auto">
-          {/* Odkaz na stránku pojištěnců */}
           <li className="nav-item">
-            <NavLink
+            <NavLink // Odkaz na stránku pojištěnců
               to="/pojistenci"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
@@ -17,9 +16,8 @@ const Navigation = () => {
               Seznam pojištěnců
             </NavLink>
           </li>
-          {/* Odkaz na stránku pojištění */}
           <li className="nav-item">
-            <NavLink
+            <NavLink // Odkaz na stránku pojištění
               to="/pojisteni"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
@@ -29,13 +27,23 @@ const Navigation = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink
+            <NavLink // Odkaz na stránku typů pojištění
               to="/typ-pojisteni"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
               }
             >
               Typy pojištění
+            </NavLink>
+          </li>
+          <li>
+            <NavLink // Odkaz na testovací stránku
+              to="/test"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              Test
             </NavLink>
           </li>
         </ul>

@@ -4,6 +4,7 @@ import InsuredList from "./pages/InsuredList";
 import InsuranceList from "./pages/InsuranceList";
 import InsuranceType from "./pages/InsuranceType";
 import Navigation from "./components/Navigation";
+import Test from "./pages/Test";
 import "./App.css";
 
 function App() {
@@ -44,6 +45,15 @@ function App() {
                   <div>
                     <h1>Typy pojištění</h1>
                     <InsuranceType />
+                  </div>
+                }
+              />
+              <Route
+                path="/test"
+                element={
+                  <div>
+                    <h1>Testovací stránka</h1>
+                    <Test />
                   </div>
                 }
               />
