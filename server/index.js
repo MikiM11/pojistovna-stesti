@@ -63,7 +63,11 @@ const InsuranceType = mongoose.model("InsuranceType", insuranceTypeSchema);
 // Vrátí všechny pojištěnce
 app.get("/api/insureds", async (req, res) => {
   try {
-    const insureds = await Insured.find();
+    const insureds = await Insured.find()
+      .populate({
+        path: "insurances", // Populuje všechna pojištění
+        populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+      });
     res.json(insureds);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -73,9 +77,11 @@ app.get("/api/insureds", async (req, res) => {
 // Vrátí pojištěnce podle ID
 app.get("/api/insureds/:id", async (req, res) => {
   try {
-    const insured = await Insured.findById(req.params.id).populate(
-      "insurances"
-    );
+    const insured = await Insured.findById(req.params.id)
+      .populate({
+        path: "insurances", // Populuje všechna pojištění
+        populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+      });
     if (insured == null) {
       return res.status(404).json({ message: "Pojištěnec nenalezen" });
     }
