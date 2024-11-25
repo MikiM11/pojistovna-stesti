@@ -43,6 +43,7 @@ body {
   margin-right: 1rem; 
 }
 
+/* Navigace */
 .nav-link {
   color: #007bff;
   font-weight: normal;
@@ -51,7 +52,7 @@ body {
 }
 
 .nav-link.active {
-  color: #ffc107!important;
+  color: #ffc107 !important;
   font-weight: bold !important;
   background-color: #f8f9fa !important;
   border-radius: 4px;
@@ -63,6 +64,7 @@ body {
   text-decoration: none;
 }
 
+/* Footer */
 footer {
   background-color: #f8f9fa; /* světle šedá */
   padding: 1rem;

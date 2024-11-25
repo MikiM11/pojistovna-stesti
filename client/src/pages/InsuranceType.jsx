@@ -40,21 +40,17 @@ function InsuranceType() {
           </thead>
           <tbody>
             {insuranceTypes.map((insuranceType) => (
-              <tr
-                key={insuranceType._id}
-                
-              >
+              <tr key={insuranceType._id}>
                 <td>{insuranceType.name}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-        {/* Pokud není žádné pojištění */}
+      {/* Pokud není žádné pojištění */}
       {!isLoading && !error && insuranceTypes.length === 0 && (
         <p>Žádné typy pojištění nejsou k dispozici.</p>
       )}
-
     </div>
   );
 }

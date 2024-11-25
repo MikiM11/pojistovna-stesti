@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from "react"; 
+//Načitání seznamu pojištěnců z API a zobrazení v tabulce
+//Při kliknutí na řádek se zobrazí detaily pojištěnce
+//-------------------------------------------------------------
+
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link pro přesměrování
 import { FlashMessage } from "../components/FlashMessage"; // Komponenta pro zobrazení chybové zprávy
 import { Spinner } from "../components/Spinner"; // Komponenta pro zobrazení indikátoru načítání
 import { apiGet } from "../utils/api"; // Funkce pro získávání dat z API
@@ -33,12 +38,21 @@ function InsuredList() {
 
   return (
     <div>
+      {/* Horní panel s tlačítkem a nadpisem */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Seznam pojištěnců</h1>
+        {/* Tlačítko pro přesměrování na samostatnou stránku */}
+        <Link to="/pridat-pojistence" className="btn btn-primary">
+          Přidat pojištěnce
+        </Link>
+      </div>
+
       {/* Zobrazení indikátoru načítání */}
       {isLoading && <Spinner />}
       {/* Zobrazení chybové zprávy */}
       {error && <FlashMessage message={error} type="danger" />}
       {/* Zobrazení tabulky, pokud nejsou chyby */}
-      {!error && (
+      {!error && !isLoading && (
         <table className="table table-striped">
           <thead>
             <tr>
@@ -70,7 +84,9 @@ function InsuredList() {
                 {/* Řádek pro zobrazení detailů pojištěnce */}
                 {selectedInsuredId === insured._id && (
                   <tr key={`${insured._id}-details`}>
-                    <td colSpan="5"> {/* Spojení všech sloupců pro detaily */}
+                    <td colSpan="5">
+                      {" "}
+                      {/* Spojení všech sloupců pro detaily */}
                       <div className="p-3 bg-light border">
                         <h5>Detail pojištěnce</h5>
                         {/* Základní detaily pojištěnce */}
@@ -81,15 +97,17 @@ function InsuredList() {
                           <strong>Telefon:</strong> {insured.phone}
                         </p>
                         <h6>Seznam pojištění</h6>
-                        {/* Kontrola, zda pojištěnec má sjednaná pojištění */}
-                        {insured.insurances && insured.insurances.length > 0 ? (
+                        {insured.insurances && insured.insurances.length > 0 ? ( // Pokud má pojištěnec pojištění, genreuje se seznam
                           <ul>
                             {/* Iterace přes pojištění pojištěnce */}
-                            {insured.insurances.map((insurance) => (
+                            {insured.insurances.map((insurance) => ( // Zobrazení detailů pojištění
                               <li key={insurance._id}>
-                                <strong>Typ:</strong> {insurance.type.name}<br />
-                                <strong>Předmět:</strong> {insurance.subject}<br />
-                                <strong>Částka:</strong> {insurance.amount} Kč<br />
+                                <strong>Typ:</strong> {insurance.type.name}
+                                <br />
+                                <strong>Předmět:</strong> {insurance.subject}
+                                <br />
+                                <strong>Částka:</strong> {insurance.amount} Kč
+                                <br />
                                 <strong>Platnost:</strong>
                                 {new Date(
                                   insurance.validFrom

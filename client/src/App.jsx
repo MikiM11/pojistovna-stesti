@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import InsuredList from "./pages/InsuredList";
 import InsuranceList from "./pages/InsuranceList";
 import InsuranceType from "./pages/InsuranceType";
+import AddInsuredForm from "./pages/AddInsuredForm"; // Import nové stránky s formulářem
 import Navigation from "./components/Navigation";
 import Test from "./pages/Test";
 import "./App.css";
@@ -12,14 +13,17 @@ function App() {
     <Router>
       <div className="app-container">
         <header className="page-header">
-        <h1>Pojišťovna Štěstí</h1>
-          <i className="bi bi-umbrella" title="Pojišťovna Štěstí"></i> 
+          <h1>Pojišťovna Štěstí</h1>
+          <i className="bi bi-umbrella" title="Pojišťovna Štěstí"></i>
         </header>
         <Navigation />
         <div className="content-wrapper">
           <div className="container mt-4">
             <Routes>
+              {/* Přesměrování na výchozí stránku */}
               <Route path="/" element={<Navigate to="/pojistenci" />} />
+              
+              {/* Seznam pojištěnců */}
               <Route
                 path="/pojistenci"
                 element={
@@ -29,6 +33,19 @@ function App() {
                   </div>
                 }
               />
+
+              {/* Stránka pro přidání pojištěnce */}
+              <Route
+                path="/pridat-pojistence"
+                element={
+                  <div>
+                    <h1>Přidat pojištěnce</h1>
+                    <AddInsuredForm />
+                  </div>
+                }
+              />
+
+              {/* Seznam pojištění */}
               <Route
                 path="/pojisteni"
                 element={
@@ -38,7 +55,8 @@ function App() {
                   </div>
                 }
               />
-              {/* Můžeme přidat další cesty */}
+
+              {/* Typy pojištění */}
               <Route
                 path="/typ-pojisteni"
                 element={
@@ -48,6 +66,8 @@ function App() {
                   </div>
                 }
               />
+
+              {/* Testovací stránka */}
               <Route
                 path="/test"
                 element={
@@ -57,6 +77,8 @@ function App() {
                   </div>
                 }
               />
+
+              {/* Stránka 404 */}
               <Route
                 path="*"
                 element={
