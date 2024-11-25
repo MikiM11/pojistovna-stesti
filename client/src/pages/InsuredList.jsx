@@ -1,57 +1,50 @@
-//Načitání seznamu pojištěnců z API a zobrazení v tabulce
-//Při kliknutí na řádek se zobrazí detaily pojištěnce
-//-------------------------------------------------------------
-
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link pro přesměrování
-import { FlashMessage } from "../components/FlashMessage"; // Komponenta pro zobrazení chybové zprávy
-import { Spinner } from "../components/Spinner"; // Komponenta pro zobrazení indikátoru načítání
-import { apiGet } from "../utils/api"; // Funkce pro získávání dat z API
+import { Link, useNavigate } from "react-router-dom"; // Přidání navigace
+import { FlashMessage } from "../components/FlashMessage";
+import { Spinner } from "../components/Spinner";
+import { apiGet } from "../utils/api";
 
 function InsuredList() {
-  // Stavy komponenty
-  const [insureds, setInsureds] = useState([]); // Pole pro seznam pojištěnců
-  const [error, setError] = useState(null); // Stav pro uchování případné chybové zprávy
-  const [selectedInsuredId, setSelectedInsuredId] = useState(null); // Uchovává ID aktuálně vybraného pojištěnce
-  const [isLoading, setIsLoading] = useState(true); // Stav pro indikaci načítání dat
+  const [insureds, setInsureds] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedInsuredId, setSelectedInsuredId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate(); // Navigace pro přesměrování na editaci
 
-  // useEffect pro načítání dat při prvním renderu komponenty
   useEffect(() => {
     const loadInsureds = async () => {
       try {
-        const data = await apiGet("insureds"); // Získání dat z API
-        setInsureds(data); // Nastavení seznamu pojištěnců do stavu
-        setIsLoading(false); // Ukončení načítání
+        const data = await apiGet("insureds");
+        setInsureds(data);
+        setIsLoading(false);
       } catch (error) {
-        setError("Chyba načítání dat. ...asi vítr... 🤷🏻‍♂️"); // Nastavení chybové zprávy
-        setIsLoading(false); // Ukončení načítání i při chybě
+        setError("Chyba načítání dat. ...asi vítr... 🤷🏻‍♂️");
+        setIsLoading(false);
       }
     };
 
-    loadInsureds(); // Volání funkce pro načtení dat
-  }, []); // Prázdné pole závislostí znamená, že se useEffect spustí jen při prvním renderu
+    loadInsureds();
+  }, []);
 
-  // Funkce pro obsluhu kliknutí na řádek tabulky
   const handleRowClick = (insuredID) => {
-    setSelectedInsuredId(selectedInsuredId === insuredID ? null : insuredID); // Přepíná zobrazení detailů pojištěnce
+    setSelectedInsuredId(selectedInsuredId === insuredID ? null : insuredID);
+  };
+
+  const handleEditClick = (insuredID) => {
+    navigate(`/upravit-pojistence/${insuredID}`); // Přesměrování na formulář s ID
   };
 
   return (
     <div>
-      {/* Horní panel s tlačítkem a nadpisem */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Seznam pojištěnců</h1>
-        {/* Tlačítko pro přesměrování na samostatnou stránku */}
         <Link to="/pridat-pojistence" className="btn btn-primary">
           Přidat pojištěnce
         </Link>
       </div>
 
-      {/* Zobrazení indikátoru načítání */}
       {isLoading && <Spinner />}
-      {/* Zobrazení chybové zprávy */}
       {error && <FlashMessage message={error} type="danger" />}
-      {/* Zobrazení tabulky, pokud nejsou chyby */}
       {!error && !isLoading && (
         <table className="table table-striped">
           <thead>
@@ -64,15 +57,13 @@ function InsuredList() {
             </tr>
           </thead>
           <tbody>
-            {/* Iterace přes seznam pojištěnců */}
             {insureds.map((insured) => (
               <>
-                {/* Řádek tabulky pro základní údaje pojištěnce */}
                 <tr
-                  key={insured._id} // Klíč pro React
-                  onClick={() => handleRowClick(insured._id)} // Přepíná detaily pojištěnce
+                  key={insured._id}
+                  onClick={() => handleRowClick(insured._id)}
                   className={
-                    selectedInsuredId === insured._id ? "table-active" : "" // Zvýraznění vybraného řádku
+                    selectedInsuredId === insured._id ? "table-active" : ""
                   }
                 >
                   <td>{insured.firstName}</td>
@@ -81,15 +72,11 @@ function InsuredList() {
                   <td>{insured.city}</td>
                   <td>{insured.postalCode}</td>
                 </tr>
-                {/* Řádek pro zobrazení detailů pojištěnce */}
                 {selectedInsuredId === insured._id && (
                   <tr key={`${insured._id}-details`}>
                     <td colSpan="5">
-                      {" "}
-                      {/* Spojení všech sloupců pro detaily */}
                       <div className="p-3 bg-light border">
                         <h5>Detail pojištěnce</h5>
-                        {/* Základní detaily pojištěnce */}
                         <p>
                           <strong>Email:</strong> {insured.email}
                         </p>
@@ -97,10 +84,9 @@ function InsuredList() {
                           <strong>Telefon:</strong> {insured.phone}
                         </p>
                         <h6>Seznam pojištění</h6>
-                        {insured.insurances && insured.insurances.length > 0 ? ( // Pokud má pojištěnec pojištění, genreuje se seznam
+                        {insured.insurances && insured.insurances.length > 0 ? (
                           <ul>
-                            {/* Iterace přes pojištění pojištěnce */}
-                            {insured.insurances.map((insurance) => ( // Zobrazení detailů pojištění
+                            {insured.insurances.map((insurance) => (
                               <li key={insurance._id}>
                                 <strong>Typ:</strong> {insurance.type.name}
                                 <br />
@@ -120,8 +106,15 @@ function InsuredList() {
                             ))}
                           </ul>
                         ) : (
-                          <p>Žádné sjednané pojištění</p> // Pokud pojištěnec nemá žádná pojištění
+                          <p>Žádné sjednané pojištění</p>
                         )}
+                        {/* Tlačítko Upravit */}
+                        <button
+                          className="btn btn-primary mt-3"
+                          onClick={() => handleEditClick(insured._id)}
+                        >
+                          Upravit
+                        </button>
                       </div>
                     </td>
                   </tr>

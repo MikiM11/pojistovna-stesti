@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import InsuredList from "./pages/InsuredList";
-import InsuranceList from "./pages/InsuranceList";
-import InsuranceType from "./pages/InsuranceType";
-import AddInsuredForm from "./pages/AddInsuredForm"; // Import nové stránky s formulářem
+import InsuredList from "./pages/InsuredList";    // Import stránky s pojištěnci
+import InsuranceList from "./pages/InsuranceList"; // Import stránky s pojištěním
+import InsuranceType from "./pages/InsuranceType"; // Import stránky s typy pojištění
+import AddInsuredForm from "./pages/AddInsuredForm"; // Import stránky s formulářem pro přidání pojištěnce
+import AddInsuranceType from "./pages/AddInsuranceType"; // Import stránky s formulářem pro přidání typu pojištění
 import Navigation from "./components/Navigation";
 import Test from "./pages/Test";
 import "./App.css";
@@ -22,7 +23,7 @@ function App() {
             <Routes>
               {/* Přesměrování na výchozí stránku */}
               <Route path="/" element={<Navigate to="/pojistenci" />} />
-              
+
               {/* Seznam pojištěnců */}
               <Route
                 path="/pojistenci"
@@ -40,6 +41,17 @@ function App() {
                 element={
                   <div>
                     <h1>Přidat pojištěnce</h1>
+                    <AddInsuredForm />
+                  </div>
+                }
+              />
+
+              {/* Stránka pro úpravu pojištěnce */}
+              <Route
+                path="/upravit-pojistence/:id"
+                element={
+                  <div>
+                    <h1>Upravit pojištěnce</h1>
                     <AddInsuredForm />
                   </div>
                 }
@@ -87,6 +99,8 @@ function App() {
                   </div>
                 }
               />
+              <Route path="/pridat-typ-pojisteni" element={<AddInsuranceType />} />
+              <Route path="/upravit-typ-pojisteni/:id" element={<AddInsuranceType />} />
             </Routes>
           </div>
         </div>
