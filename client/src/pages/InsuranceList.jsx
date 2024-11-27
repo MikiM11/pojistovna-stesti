@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro chybové hlášky
 import { Spinner } from "../components/Spinner"; // Import komponenty spinneru
-import { apiGet } from "../utils/api"; // Import vlastní funkce pro API komunikaci
+import { fetchInsurances } from "../utils/insuranceUtils"; // Import funkce z insuranceUtils
 
 function InsuranceList() {
   const [insurances, setInsurances] = useState([]); // State pro seznam pojištění
@@ -12,15 +12,15 @@ function InsuranceList() {
   // Funkce pro načítání seznamu pojištění
   useEffect(() => {
     const loadInsurances = async () => {
-        try {
-            const data = await apiGet("insurances"); // Volání API pro načtení pojištění
-            setInsurances(data);
-            setIsLoading(false); // Skrytí spineru
-          } catch (error) {
-            setError("Chyba načítání dat. ...asi vítr... 🤷🏻‍♂️"); // Uložení chyby do state
-            setIsLoading(false); // Skrytí spineru
-          }
-        };
+      try {
+        const data = await fetchInsurances(); // Volání sdílené funkce pro načtení pojištění
+        setInsurances(data);
+        setIsLoading(false); // Skrytí spinneru
+      } catch (error) {
+        setError(error.message); // Uložení chyby do state
+        setIsLoading(false); // Skrytí spinneru
+      }
+    };
 
     loadInsurances();
   }, []);
@@ -32,9 +32,8 @@ function InsuranceList() {
 
   return (
     <div>
-      {isLoading && ( //Zobrazení spinneru
-        <Spinner />
-      )}
+      {/* Zobrazení spinneru při načítání */}
+      {isLoading && <Spinner />}
 
       {/* Zobrazení chybové hlášky */}
       {error && <FlashMessage message={error} type="danger" />}
@@ -54,7 +53,10 @@ function InsuranceList() {
           </thead>
           <tbody>
             {insurances.map((insurance) => (
-              <tr key={insurance._id}>
+              <tr
+                key={insurance._id}
+                onClick={() => handleRowClick(insurance._id)} // Kliknutí na řádek
+              >
                 <td>{insurance.type?.name || "N/A"}</td>
                 <td>{insurance.amount} Kč</td>
                 <td>

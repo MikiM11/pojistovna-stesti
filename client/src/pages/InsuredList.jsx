@@ -38,7 +38,7 @@ function InsuredList() {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Seznam pojištěnců</h1>
-        <Link to="/pridat-pojistence" className="btn btn-primary">
+        <Link to="/pridat-pojistence" className="btn btn-outline-primary">
           Přidat pojištěnce
         </Link>
       </div>
@@ -88,13 +88,10 @@ function InsuredList() {
                           <ul>
                             {insured.insurances.map((insurance) => (
                               <li key={insurance._id}>
-                                <strong>Typ:</strong> {insurance.type.name}
-                                <br />
-                                <strong>Předmět:</strong> {insurance.subject}
-                                <br />
-                                <strong>Částka:</strong> {insurance.amount} Kč
-                                <br />
-                                <strong>Platnost:</strong>
+                                <strong>Typ: </strong> {insurance.type.name}
+                                <strong> Předmět: </strong> {insurance.subject}
+                                <strong> Částka: </strong> {insurance.amount} Kč
+                                <strong> Platnost: </strong>
                                 {new Date(
                                   insurance.validFrom
                                 ).toLocaleDateString()}
@@ -110,7 +107,7 @@ function InsuredList() {
                         )}
                         {/* Tlačítko Upravit */}
                         <button
-                          className="btn btn-primary mt-3"
+                          className="btn btn-outline-primary mt-3"
                           onClick={() => handleEditClick(insured._id)}
                         >
                           Upravit

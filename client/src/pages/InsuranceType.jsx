@@ -37,7 +37,7 @@ function InsuranceType() {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h6>Zde je možné přidat, nebo upravit typy pojištění</h6>
         <button
-          className="btn btn-primary"
+          className="btn btn-outline-primary"
           onClick={handleAddInsuranceType}
         >
           Přidat pojištění
@@ -64,7 +64,7 @@ function InsuranceType() {
                 <td>{insuranceType.name}</td>
                 <td className="text-end">
                   <button
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-outline-primary btn-sm"
                     onClick={() => handleEditInsuranceType(insuranceType._id)}
                   >
                     Upravit

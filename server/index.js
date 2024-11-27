@@ -162,30 +162,54 @@ app.get("/api/insurances/:id", async (req, res) => {
 });
 
 // Vytvoří novou pojistku
+// Endpoint pro přidání pojištění
 app.post("/api/insurances", async (req, res) => {
-  const insurance = new Insurance(req.body);
   try {
-    const newInsurance = await insurance.save();
+    // Vytvoření nového pojištění
+    const newInsurance = await Insurance.create(req.body);
+
+    // Aktualizace pojištěnce - přidání ID pojištění
+    await Insured.findByIdAndUpdate(req.body.insured, {
+      $push: { insurances: newInsurance._id },
+    });
+
     res.status(201).json(newInsurance);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    console.error("Chyba při přidávání pojištění:", error);
+    res.status(500).json({ message: "Chyba při přidávání pojištění." });
   }
 });
 
-// Aktualizuje pojistku podle ID
+// Endpoint pro úpravu pojištění
 app.put("/api/insurances/:id", async (req, res) => {
   try {
+    // Najdeme původní pojištění
+    const oldInsurance = await Insurance.findById(req.params.id);
+
+    // Pokud se změnil pojištěnec, aktualizujeme propojení
+    if (oldInsurance.insured.toString() !== req.body.insured) {
+      // Odebereme ID pojištění z původního pojištěnce
+      await Insured.findByIdAndUpdate(oldInsurance.insured, {
+        $pull: { insurances: oldInsurance._id },
+      });
+
+      // Přidáme ID pojištění novému pojištěnci
+      await Insured.findByIdAndUpdate(req.body.insured, {
+        $push: { insurances: oldInsurance._id },
+      });
+    }
+
+    // Aktualizace samotného pojištění
     const updatedInsurance = await Insurance.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true }
     );
-    if (updatedInsurance == null) {
-      return res.status(404).json({ message: "Pojištění nenalezeno" });
-    }
-    res.json(updatedInsurance);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    res.status(200).json(updatedInsurance);
+  } catch (error) {
+    console.error("Chyba při úpravě pojištění:", error);
+    res.status(500).json({ message: "Chyba při úpravě pojištění." });
   }
 });
 
@@ -256,17 +280,34 @@ app.put("/api/insuranceTypes/:id", async (req, res) => {
 });
 
 // Smaže typ pojištění podle ID
+const { ObjectId } = mongoose.Types;
+
 app.delete("/api/insuranceTypes/:id", async (req, res) => {
   try {
-    const deletedInsuranceType = await InsuranceType.findByIdAndDelete(
-      req.params.id
-    );
-    if (deletedInsuranceType == null) {
-      return res.status(404).json({ message: "Typ pojištění nenalezen" });
+    const { id } = req.params;
+
+    // Ověření, zda ID je validní ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Neplatné ID typu pojištění." });
     }
-    res.json({ message: "Typ pojištění smazán" });
+
+    // Zkontroluje, zda je typ pojištění použitý v některé pojistce
+    const isUsed = await Insurance.findOne({ type: new ObjectId(id) });
+    if (isUsed) {
+      return res.status(400).json({
+        message: "Typ pojištění nelze smazat, protože je použitý v některé pojistce.",
+      });
+    }
+
+    // Pokud není použitý, smaže typ pojištění
+    const deletedInsuranceType = await InsuranceType.findByIdAndDelete(id);
+    if (!deletedInsuranceType) {
+      return res.status(404).json({ message: "Typ pojištění nenalezen." });
+    }
+
+    res.json({ message: "Typ pojištění byl úspěšně smazán." });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Chyba při mazání typu pojištění." });
   }
 });
 

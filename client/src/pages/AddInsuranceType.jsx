@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // Přidání useParams pro čtení ID z URL
-import { apiGet, apiPost, apiPut } from "../utils/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { apiGet, apiPost, apiPut, apiDelete } from "../utils/api";
 import FlashMessage from "../components/FlashMessage";
 import { Spinner } from "../components/Spinner";
 
 function AddInsuranceType() {
-  const { id } = useParams(); // Načtení ID z URL
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
   });
   const [flashMessage, setFlashMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Stav pro spinner
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Načtení dat existujícího typu pojištění
@@ -19,7 +19,7 @@ function AddInsuranceType() {
       setIsLoading(true);
       apiGet(`insuranceTypes/${id}`)
         .then((data) => {
-          setFormData(data); // Načtení dat do formuláře
+          setFormData(data);
           setIsLoading(false);
         })
         .catch(() => {
@@ -38,23 +38,21 @@ function AddInsuranceType() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Zobrazení spinneru během odesílání
+    setIsLoading(true);
     try {
       if (id) {
-        // Aktualizace existujícího typu pojištění
         await apiPut(`insuranceTypes/${id}`, formData);
         setFlashMessage({
           message: "Změny byly úspěšně uloženy.",
           type: "success",
         });
       } else {
-        // Přidání nového typu pojištění
         await apiPost("insuranceTypes", formData);
         setFlashMessage({
           message: "Nový typ pojištění byl úspěšně přidán.",
           type: "success",
         });
-        setFormData({ name: "" }); // Reset formuláře po úspěchu
+        setFormData({ name: "" });
       }
     } catch {
       setFlashMessage({
@@ -62,12 +60,40 @@ function AddInsuranceType() {
         type: "danger",
       });
     } finally {
-      setIsLoading(false); // Skrytí spinneru po dokončení požadavku
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    const confirmDelete = window.confirm("Opravdu chcete smazat tento typ pojištění?");
+    if (!confirmDelete) return;
+
+    setIsLoading(true);
+    try {
+      await apiDelete(`insuranceTypes/${id}`);
+      setFlashMessage({
+        message: "Typ pojištění byl úspěšně smazán.",
+        type: "success",
+      });
+      navigate("/typ-pojisteni");
+    } catch (error) {
+      // Logujeme celou strukturu chyby
+      console.error("Chyba při mazání typu pojištění:", error);
+
+      // Zpracování chybové zprávy z backendu
+      const errorMessage = error.message || "Chyba při mazání typu pojištění.";
+      setFlashMessage({
+        message: errorMessage,
+        type: "danger",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleBack = () => {
-    navigate("/typ-pojisteni"); // Přesměrování zpět na seznam typů pojištění
+    navigate("/typ-pojisteni");
   };
 
   return (
@@ -77,7 +103,7 @@ function AddInsuranceType() {
         <FlashMessage message={flashMessage.message} type={flashMessage.type} />
       )}
       {isLoading ? (
-        <Spinner /> // Zobrazení spinneru při načítání
+        <Spinner />
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -95,12 +121,17 @@ function AddInsuranceType() {
             />
           </div>
           <div className="d-flex gap-3">
-            <button type="submit" className="btn btn-success">
+            <button type="submit" className="btn btn-outline-success">
               {id ? "Uložit změny" : "Přidat pojištění"}
             </button>
-            <button type="button" className="btn btn-secondary" onClick={handleBack}>
+            <button type="button" className="btn btn-outline-secondary" onClick={handleBack}>
               Zpět
             </button>
+            {id && (
+              <button type="button" className="btn btn-outline-danger" onClick={handleDelete}>
+                Smazat
+              </button>
+            )}
           </div>
         </form>
       )}
