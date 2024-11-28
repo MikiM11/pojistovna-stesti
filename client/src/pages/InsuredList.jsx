@@ -1,3 +1,5 @@
+//Stránka pro zobrazení seznamu pojištěnců
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Přidání navigace
 import { FlashMessage } from "../components/FlashMessage";
@@ -37,7 +39,7 @@ function InsuredList() {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Seznam pojištěnců</h1>
+        <h6>Seznam klientů naší pojišťovny</h6>
         <Link to="/pridat-pojistence" className="btn btn-outline-primary">
           Přidat pojištěnce
         </Link>
