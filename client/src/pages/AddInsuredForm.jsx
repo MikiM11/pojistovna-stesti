@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiGet, apiPost, apiPut } from "../utils/api";
+import { apiGet, apiPost, apiPut, apiDelete } from "../utils/api";
 import FlashMessage from "../components/FlashMessage";
 import { Spinner } from "../components/Spinner";
 import AddInsuranceForm from "../components/AddInsuranceForm";
@@ -70,12 +70,43 @@ function AddInsuredForm() {
       });
     }
   };
+
+  const handleDeleteInsurance = async (insuranceId) => {
+    if (window.confirm("Opravdu chcete toto pojištění odstranit?")) {
+      try {
+        // Krok 1: Odebrání ID pojištění z pojištěnce
+        const updatedInsured = {
+          ...formData,
+          insurances: formData.insurances.filter((id) => id !== insuranceId),
+        };
+        await apiPut(`insureds/${formData._id}`, updatedInsured);
+  
+        // Krok 2: Smazání samotného pojištění
+        await apiDelete(`insurances/${insuranceId}`);
+  
+        // Aktualizace dat ve formuláři
+        const updatedData = await apiGet(`insureds/${formData._id}`);
+        setFormData(updatedData);
+  
+        setFlashMessage({
+          message: "Pojištění bylo úspěšně odstraněno.",
+          type: "success",
+        });
+      } catch (error) {
+        setFlashMessage({
+          message: "Chyba při odstraňování pojištění.",
+          type: "danger",
+        });
+      }
+    }
+  };
+
   //vykreslování komponenty
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">
-        {id ? "Upravit pojištěnce" : "Přidat nového pojištěnce"}
-      </h2>
+      <h6 className="mb-3">
+        {id ? "Upravte údaje pojištěnce, spravujte jeho pojištění" : "Přidejte nového pojištěnce"}
+      </h6>
       {flashMessage && (
         <FlashMessage message={flashMessage.message} type={flashMessage.type} />
       )}
@@ -220,18 +251,24 @@ function AddInsuredForm() {
                 </tr>
               </thead>
               <tbody>
-                {formData.insurances.map((insurance) => (
-                  <tr key={insurance._id}>
-                    <td>{insurance.type?.name || "N/A"}</td>
-                    <td>{insurance.amount} Kč</td>
-                    <td>{insurance.subject}</td>
-                    <td>
-                      {new Date(insurance.validFrom).toLocaleDateString()}
-                    </td>
-                    <td>{new Date(insurance.validTo).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {formData.insurances.map((insurance) => (
+    <tr key={insurance._id}>
+      <td>{insurance.type?.name || "N/A"}</td>
+      <td>{insurance.amount} Kč</td>
+      <td>{insurance.subject}</td>
+      <td>{new Date(insurance.validFrom).toLocaleDateString()}</td>
+      <td>{new Date(insurance.validTo).toLocaleDateString()}</td>
+      <td>
+        <button
+          className="btn btn-outline-danger btn-sm"
+          onClick={() => handleDeleteInsurance(insurance._id)}
+        >
+          Odstranit
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
             </table>
           ) : (
             <p>Žádné sjednané pojištění</p>
