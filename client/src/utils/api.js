@@ -6,12 +6,12 @@ export async function apiGet(endpoint) {
   try {
     const response = await fetch(`${API_URL}${endpoint}`);
     if (!response.ok) {
-      throw new Error(`Chyba při GET na ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Chyba při GET na ${endpoint}: ${response.statusText}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error(`Chyba při načítání dat z ${endpoint}:`, error);
+    console.error(`Chyba při načítání dat z ${endpoint}:`, error.message);
     throw error;
   }
 }
@@ -28,13 +28,13 @@ export async function apiPost(endpoint, body) {
     });
 
     if (!response.ok) {
-      throw new Error(`Chyba při POST na ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Chyba při POST na ${endpoint}: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error(`Chyba při odesílání dat na ${endpoint}:`, error);
+    console.error(`Chyba při odesílání dat na ${endpoint}:`, error.message);
     throw error;
   }
 }
@@ -51,13 +51,13 @@ export async function apiPut(endpoint, body) {
     });
 
     if (!response.ok) {
-      throw new Error(`Chyba při PUT na ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Chyba při PUT na ${endpoint}: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error(`Chyba při odesílání dat na ${endpoint}:`, error);
+    console.error(`Chyba při odesílání dat na ${endpoint}:`, error.message);
     throw error;
   }
 }
@@ -77,10 +77,9 @@ export async function apiDelete(endpoint) {
       throw new Error(errorData.message || `Chyba při DELETE na ${endpoint}: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error(`Chyba při mazání dat na ${endpoint}:`, error);
+    console.error(`Chyba při mazání dat na ${endpoint}:`, error.message);
     throw error;
   }
 }

@@ -1,7 +1,7 @@
 //API PRO SPRÁVU POJIŠTĚNÍ - SERVEROVÁ ČÁST
 
 const express = require("express");
-const cors = require('cors'); // Import cors
+const cors = require("cors"); // Import cors
 const mongoose = require("mongoose");
 
 const app = express();
@@ -22,20 +22,55 @@ mongoose
 
 //SCHÉMATA A MODELY
 //schéma pro pojištěnce
+//SCHÉMATA A MODELY
+//schéma pro pojištěnce
 const insuredSchema = new mongoose.Schema({
-  firstName: { type: String, required: true }, //Jméno
-  lastName: { type: String, required: true }, //Příjmení
-  street: String, //Ulice
-  city: String, //Město
-  postalCode: String, //PSČ
+  firstName: {
+    type: String,
+    required: [true, "Vyplňte jméno."], // Jméno
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    required: [true, "Vyplňte příjmení."], // Příjmení
+    trim: true,
+  },
+  street: { type: String, required: [true, "Vyplňte název ulice."], // Ulice
+    trim: true,
+   },
+  city: {
+    type: String,
+    required: [true, "Vyplňte město."], // Město
+    trim: true,
+  },
+  postalCode: {
+    type: String,
+    required: [true, "PSČ je povinné."], // PSČ
+    trim: true,
+    match: [/^\d{5}$/, "PSČ musí obsahovat přesně 5 číslic."], // Validace PSČ
+  },
   email: {
     type: String,
-    required: true,
+    required: [true, "Výplňte email."], // Email
     unique: true,
-    match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  }, // Validace e-mailu
-  phone: { type: String, match: /^\+?\d{3,15}$/ },
-  insurances: [{ type: mongoose.Schema.Types.ObjectId, ref: "Insurance" }], // Reference na pojištění
+    trim: true,
+    match: [
+      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Email má nesprávný formát.", // Validace formátu emailu
+    ],
+  },
+  phone: {
+    type: String,
+    required: [true, "Vyplňte telefonní číslo"], // Povinné pole
+    trim: true,
+    match: [
+      /^\+?[0-9\s\-()]{7,15}$/,
+      "Telefonní číslo není ve správném formátu).", // Validace čísla
+    ],
+  },
+  insurances: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Insurance" }, // Reference na pojištění
+  ],
 });
 
 //schéma pro typ pojištění
@@ -63,11 +98,10 @@ const InsuranceType = mongoose.model("InsuranceType", insuranceTypeSchema);
 // Vrátí všechny pojištěnce
 app.get("/api/insureds", async (req, res) => {
   try {
-    const insureds = await Insured.find()
-      .populate({
-        path: "insurances", // Populuje všechna pojištění
-        populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
-      });
+    const insureds = await Insured.find().populate({
+      path: "insurances", // Populuje všechna pojištění
+      populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+    });
     res.json(insureds);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -77,11 +111,10 @@ app.get("/api/insureds", async (req, res) => {
 // Vrátí pojištěnce podle ID
 app.get("/api/insureds/:id", async (req, res) => {
   try {
-    const insured = await Insured.findById(req.params.id)
-      .populate({
-        path: "insurances", // Populuje všechna pojištění
-        populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
-      });
+    const insured = await Insured.findById(req.params.id).populate({
+      path: "insurances", // Populuje všechna pojištění
+      populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+    });
     if (insured == null) {
       return res.status(404).json({ message: "Pojištěnec nenalezen" });
     }
@@ -295,7 +328,8 @@ app.delete("/api/insuranceTypes/:id", async (req, res) => {
     const isUsed = await Insurance.findOne({ type: new ObjectId(id) });
     if (isUsed) {
       return res.status(400).json({
-        message: "Typ pojištění nelze smazat, protože je použitý v některé pojistce.",
+        message:
+          "Typ pojištění nelze smazat, protože je použitý v některé pojistce.",
       });
     }
 
