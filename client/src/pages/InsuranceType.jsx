@@ -1,3 +1,5 @@
+// Stránka pro zobrazení typů pojištění
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro zobrazení chybové hlášky

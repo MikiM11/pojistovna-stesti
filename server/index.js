@@ -95,43 +95,64 @@ const InsuranceType = mongoose.model("InsuranceType", insuranceTypeSchema);
 //ENDPOINTY API
 // Endpointy pro pojištěnce
 
-// Vrátí všechny pojištěnce
+/// Vrátí pojištěnce s podporou filtrování a stránkování
 app.get("/api/insureds", async (req, res) => {
   try {
-    const insureds = await Insured.find().populate({
-      path: "insurances", // Populuje všechna pojištění
-      populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+    const { firstName, lastName, street, city, postalCode, page = 1, limit = 10 } = req.query;
+
+    const filter = {};
+    if (firstName) filter.firstName = { $regex: firstName, $options: "i" };
+    if (lastName) filter.lastName = { $regex: lastName, $options: "i" };
+    if (street) filter.street = { $regex: street, $options: "i" };
+    if (city) filter.city = { $regex: city, $options: "i" };
+    if (postalCode) filter.postalCode = { $regex: postalCode, $options: "i" };
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    const offset = (pageNum - 1) * limitNum;
+
+    const insureds = await Insured.find(filter)
+      .skip(offset)
+      .limit(limitNum)
+      .populate({
+        path: "insurances", // Načte pojištění
+        populate: { path: "type" }, // Načte typ pojištění
+      });
+
+    const totalRecords = await Insured.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecords / limitNum);
+
+    res.json({
+      data: insureds, // Kompletní pojištěnci s detaily pojištění
+      totalPages,
+      totalRecords,
     });
-    res.json(insureds);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Chyba při načítání pojištěnců:", err);
+    res.status(500).json({ message: "Chyba při načítání pojištěnců." });
   }
 });
 
-// Vrátí pojištěnce podle ID
+// Vrátí detaily pojištěnce podle ID
 app.get("/api/insureds/:id", async (req, res) => {
   try {
+    // Načte pojištěnce podle ID a populací jeho pojištění
     const insured = await Insured.findById(req.params.id).populate({
-      path: "insurances", // Populuje všechna pojištění
-      populate: { path: "type" }, // Populuje typ pojištění (InsuranceType)
+      path: "insurances", // Načte pojištění
+      populate: { path: "type" }, // Načte typ pojištění
     });
-    if (insured == null) {
+
+    // Pokud pojištěnec neexistuje, vrátí 404
+    if (!insured) {
       return res.status(404).json({ message: "Pojištěnec nenalezen" });
     }
+
+    // Vrátí detail pojištěnce
     res.json(insured);
   } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Vytvoří nového pojištěnce
-app.post("/api/insureds", async (req, res) => {
-  const insured = new Insured(req.body);
-  try {
-    const newInsured = await insured.save();
-    res.status(201).json(newInsured);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Chyba při načítání detailů pojištěnce:", err);
+    res.status(500).json({ message: "Nepodařilo se načíst data pojištěnce." });
   }
 });
 
