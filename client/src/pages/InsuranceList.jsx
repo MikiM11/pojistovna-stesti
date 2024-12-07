@@ -1,45 +1,105 @@
 import React, { useState, useEffect } from "react";
-import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro chybové hlášky
-import { Spinner } from "../components/Spinner"; // Import komponenty spinneru
-import { fetchInsurances } from "../utils/insuranceUtils"; // Import funkce z insuranceUtils
+import { FlashMessage } from "../components/FlashMessage";
+import { Spinner } from "../components/Spinner";
+import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils";
 
 function InsuranceList() {
-  const [insurances, setInsurances] = useState([]); // State pro seznam pojištění
-  const [error, setError] = useState(null); // State pro chybové hlášky
-  const [selectedInsuranceId, setSelectedInsuranceId] = useState(null); // State pro vybrané pojištění
-  const [isLoading, setIsLoading] = useState(true); // State pro indikaci načítání
+  const [insurances, setInsurances] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [type, setType] = useState(""); // Filtrování podle typu
+  const [insuredName, setInsuredName] = useState(""); // Filtrování podle jména
+  const [page, setPage] = useState(1); // Aktuální stránka
+  const [totalPages, setTotalPages] = useState(1); // Celkový počet stránek
+  const [insuranceTypes, setInsuranceTypes] = useState([]); // Dostupné typy pojištění
 
-  // Funkce pro načítání seznamu pojištění
+  // Načtení typů pojištění
+  const loadInsuranceTypes = async () => {
+    try {
+      const types = await fetchInsuranceTypes();
+      setInsuranceTypes(types);
+    } catch (error) {
+      setError("Nepodařilo se načíst typy pojištění.");
+    }
+  };
+
+  // Načtení typů pojištění při prvním renderu
   useEffect(() => {
-    const loadInsurances = async () => {
-      try {
-        const data = await fetchInsurances(); // Volání sdílené funkce pro načtení pojištění
-        setInsurances(data);
-        setIsLoading(false); // Skrytí spinneru
-      } catch (error) {
-        setError(error.message); // Uložení chyby do state
-        setIsLoading(false); // Skrytí spinneru
-      }
-    };
-
-    loadInsurances();
+    loadInsuranceTypes();
   }, []);
 
-  // Obsluha kliknutí na řádek v tabulce
-  const handleRowClick = (insuranceID) => {
-    setSelectedInsuranceId(insuranceID);
+  // Načtení pojištění při změně filtrů nebo stránky
+  useEffect(() => {
+    // Načtení seznamu pojištění
+    const loadInsurances = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const data = await fetchInsurances({ type, insuredName, page });
+        setInsurances(data.data);
+        setTotalPages(data.totalPages);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadInsurances();
+  }, [type, insuredName, page]);
+
+  // Obsluha změny stránky
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  // Reset filtrů
+  const handleResetFilters = () => {
+    setType("");
+    setInsuredName("");
+    setPage(1);
   };
 
   return (
     <div>
-      {/* Zobrazení spinneru při načítání */}
       {isLoading && <Spinner />}
-
-      {/* Zobrazení chybové hlášky */}
       {error && <FlashMessage message={error} type="danger" />}
 
-      {/* Tabulka se seznamem pojištění */}
-      {!isLoading && !error && (
+      {/* Filtrovací formulář */}
+      <div className="mb-3">
+        <div className="d-flex justify-content-between">
+          <select
+            className="form-select me-2"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <option value="">Všechny typy</option>
+            {insuranceTypes.map((insuranceType) => (
+              <option key={insuranceType._id} value={insuranceType._id}>
+                {insuranceType.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder="Jméno pojištěnce"
+            value={insuredName}
+            onChange={(e) => setInsuredName(e.target.value)}
+          />
+          <button
+            className="btn btn-outline-secondary"
+            onClick={handleResetFilters}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      {/* Tabulka */}
+      {!isLoading && !error && insurances.length > 0 && (
         <table className="table table-striped">
           <thead>
             <tr>
@@ -53,10 +113,7 @@ function InsuranceList() {
           </thead>
           <tbody>
             {insurances.map((insurance) => (
-              <tr
-                key={insurance._id}
-                onClick={() => handleRowClick(insurance._id)} // Kliknutí na řádek
-              >
+              <tr key={insurance._id}>
                 <td>{insurance.type?.name || "N/A"}</td>
                 <td>{insurance.amount} Kč</td>
                 <td>
@@ -73,9 +130,46 @@ function InsuranceList() {
         </table>
       )}
 
-      {/* Pokud není žádné pojištění */}
+      {/* Žádná data */}
       {!isLoading && !error && insurances.length === 0 && (
         <p>Žádná pojištění nejsou k dispozici.</p>
+      )}
+
+      {/* Stránkování */}
+      {!isLoading && !error && totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(page - 1)}
+              >
+                Předchozí
+              </button>
+            </li>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item ${pageNumber === page ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            ))}
+            <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(page + 1)}
+              >
+                Další
+              </button>
+            </li>
+          </ul>
+        </nav>
       )}
     </div>
   );

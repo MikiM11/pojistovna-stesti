@@ -5,8 +5,7 @@ import InsuranceList from "./pages/InsuranceList"; // Import stránky s pojišt�
 import InsuranceType from "./pages/InsuranceType"; // Import stránky s typy pojištění
 import AddInsuredForm from "./pages/AddInsuredForm"; // Import stránky s formulářem pro přidání pojištěnce
 import AddInsuranceType from "./pages/AddInsuranceType"; // Import stránky s formulářem pro přidání typu pojištění
-import Navigation from "./components/Navigation";
-import Test from "./pages/Test";
+import Navigation from "./components/Navigation"; // Import navigace
 import "./App.css";
 
 function App() {
@@ -75,17 +74,6 @@ function App() {
                   <div>
                     <h1>Typy pojištění</h1>
                     <InsuranceType />
-                  </div>
-                }
-              />
-
-              {/* Testovací stránka */}
-              <Route
-                path="/test"
-                element={
-                  <div>
-                    <h1>Testovací stránka</h1>
-                    <Test />
                   </div>
                 }
               />

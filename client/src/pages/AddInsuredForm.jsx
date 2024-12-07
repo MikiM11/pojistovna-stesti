@@ -278,7 +278,6 @@ function AddInsuredForm() {
           </form>
 
           {/* Tabulka pro zobrazení pojištění */}
-          {console.log("handleReset typ:", typeof handleReset)}
           <h3 className="mt-4">Uzavřená pojištění</h3>
           {formData.insurances.length > 0 ? (
             <table className="table table-striped">

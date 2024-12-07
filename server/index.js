@@ -188,30 +188,55 @@ app.delete("/api/insureds/:id", async (req, res) => {
 
 // Endpointy pro pojištění
 
-// Vrátí všechny pojistky
+// Vrátí pojištění s podporou filtrování a stránkování
 app.get("/api/insurances", async (req, res) => {
   try {
-    const insurances = await Insurance.find()
-      .populate("insured")
-      .populate("type");
-    res.json(insurances);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+    const { type, insuredName, page = 1, limit = 10 } = req.query;
 
-// Vrátí pojistku podle ID
-app.get("/api/insurances/:id", async (req, res) => {
-  try {
-    const insurance = await Insurance.findById(req.params.id)
+    // Filtr pro vyhledávání
+    const filter = {};
+
+    // Filtrování podle typu pojištění
+    if (type && mongoose.Types.ObjectId.isValid(type)) {
+      filter.type = type; // Předpokládá validní ObjectId
+    }
+
+    // Filtrování podle jména pojištěnce
+    if (insuredName) {
+      const insureds = await Insured.find({
+        $or: [
+          { firstName: { $regex: insuredName, $options: "i" } },
+          { lastName: { $regex: insuredName, $options: "i" } },
+        ],
+      }).select("_id");
+      filter.insured = { $in: insureds.map((insured) => insured._id) };
+    }
+
+    // Stránkování
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const offset = (pageNum - 1) * limitNum;
+
+    // Načtení pojištění
+    const insurances = await Insurance.find(filter)
+      .skip(offset)
+      .limit(limitNum)
       .populate("insured")
       .populate("type");
-    if (insurance == null) {
-      return res.status(404).json({ message: "Pojištění nenalezeno" });
-    }
-    res.json(insurance);
+
+    // Celkový počet záznamů
+    const totalRecords = await Insurance.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecords / limitNum);
+
+    // Odpověď
+    res.json({
+      data: insurances,
+      totalPages,
+      totalRecords,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Chyba při načítání pojištění:", err);
+    res.status(500).json({ message: "Chyba při načítání pojištění." });
   }
 });
 

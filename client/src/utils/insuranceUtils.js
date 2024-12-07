@@ -1,10 +1,17 @@
 // Import API utility
 import { apiGet, apiPost, apiPut, apiDelete } from "./api"; 
 
-// Načtení seznamu pojištění
-export const fetchInsurances = async () => {
+// Načtení seznamu pojištění s podporou filtrování a stránkování
+export const fetchInsurances = async ({ type, insuredName, page = 1, limit = 10 } = {}) => {
   try {
-    const data = await apiGet("insurances");
+    // Sestavení dotazovacího řetězce
+    const params = new URLSearchParams();
+    if (type) params.append("type", type);
+    if (insuredName) params.append("insuredName", insuredName);
+    params.append("page", page);
+    params.append("limit", limit);
+
+    const data = await apiGet(`insurances?${params.toString()}`);
     return data;
   } catch (error) {
     throw new Error("Nepodařilo se načíst seznam pojištění.");
@@ -14,7 +21,7 @@ export const fetchInsurances = async () => {
 // Načtení typů pojištění
 export const fetchInsuranceTypes = async () => {
   try {
-    const data = await apiGet("insurance-types");
+    const data = await apiGet("insuranceTypes"); // Správný endpoint
     return data;
   } catch (error) {
     throw new Error("Nepodařilo se načíst typy pojištění.");

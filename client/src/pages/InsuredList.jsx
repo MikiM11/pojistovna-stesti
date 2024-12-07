@@ -171,21 +171,19 @@ function InsuredList() {
             </thead>
             <tbody>
               {insureds.map((insured) => (
-                <>
+                <React.Fragment key={insured._id}>
                   <tr
-                    key={insured._id}
+                    key={insured._id} // Unikátní klíč pro řádek pojištěnce
                     onClick={() => handleRowClick(insured._id)}
-                    className={
-                      selectedInsuredId === insured._id ? "table-active" : ""
-                    }
+                    className={selectedInsuredId === insured._id ? "table-active" : ""}
                   >
                     <td>{insured.firstName}</td>
                     <td>{insured.lastName}</td>
                     <td>{insured.street}</td>
                     <td>{insured.city}</td>
                     <td>{insured.postalCode}</td>
-                  </tr>
-                  {selectedInsuredId === insured._id && (
+                  </tr>{selectedInsuredId === insured._id && (
+                    // Unikátní klíč pro detailní řádek
                     <tr key={`${insured._id}-details`}>
                       <td colSpan="5">
                         <div className="p-3 bg-light border">
@@ -200,25 +198,20 @@ function InsuredList() {
                           {insured.insurances && insured.insurances.length > 0 ? (
                             <ul>
                               {insured.insurances.map((insurance) => (
+                                // Unikátní klíč pro pojištění
                                 <li key={insurance._id}>
                                   <strong>Typ: </strong> {insurance.type.name}
                                   <strong> Předmět: </strong> {insurance.subject}
                                   <strong> Částka: </strong> {insurance.amount} Kč
                                   <strong> Platnost: </strong>
-                                  {new Date(
-                                    insurance.validFrom
-                                  ).toLocaleDateString()}
-                                  -
-                                  {new Date(
-                                    insurance.validTo
-                                  ).toLocaleDateString()}
+                                  {new Date(insurance.validFrom).toLocaleDateString()} -{" "}
+                                  {new Date(insurance.validTo).toLocaleDateString()}
                                 </li>
                               ))}
                             </ul>
                           ) : (
                             <p>Žádné sjednané pojištění</p>
                           )}
-                          {/* Tlačítko Upravit */}
                           <button
                             className="btn btn-outline-primary mt-3"
                             onClick={() => handleEditClick(insured._id)}
@@ -229,7 +222,7 @@ function InsuredList() {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -237,19 +230,35 @@ function InsuredList() {
           {/* Stránkování */}
           <nav>
             <ul className="pagination justify-content-center">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}> {/*Pokud je první stránka, tlačítko je disabled*/}
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Předchozí
+                </button>
+              </li>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
                 <li
-                  key={page}
-                  className={`page-item ${page === currentPage ? "active" : ""}`}
+                  key={pageNumber}
+                  className={`page-item ${pageNumber === currentPage ? "active" : ""}`}
                 >
                   <button
                     className="page-link"
-                    onClick={() => handlePageChange(page)}
+                    onClick={() => handlePageChange(pageNumber)}
                   >
-                    {page}
+                    {pageNumber}
                   </button>
                 </li>
               ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}> {/*Pokud je stránka poslední, tlačítko je disabled*/}
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Další
+                </button>
+              </li>
             </ul>
           </nav>
         </>

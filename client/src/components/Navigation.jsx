@@ -36,16 +36,6 @@ const Navigation = () => {
               Typy pojištění
             </NavLink>
           </li>
-          <li>
-            <NavLink // Odkaz na testovací stránku
-              to="/test"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              Test
-            </NavLink>
-          </li>
         </ul>
       </div>
     </nav>
