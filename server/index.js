@@ -156,6 +156,19 @@ app.get("/api/insureds/:id", async (req, res) => {
   }
 });
 
+// Přidání nového pojištěnce
+app.post("/api/insureds", async (req, res) => {
+  try {
+    const newInsured = new Insured(req.body); // Vytvoří nový dokument z dat v těle požadavku
+    await newInsured.save(); // Uloží do databáze
+
+    res.status(201).json(newInsured); // Vrátí uložený dokument s kódem 201 (Created)
+  } catch (err) {
+    console.error("Chyba při přidávání pojištěnce:", err);
+    res.status(400).json({ message: err.message }); // Vrátí chybu
+  }
+});
+
 // Aktualizuje pojištěnce podle ID
 app.put("/api/insureds/:id", async (req, res) => {
   try {

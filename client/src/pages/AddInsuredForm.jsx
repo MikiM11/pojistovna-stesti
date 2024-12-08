@@ -1,4 +1,4 @@
-// Stránka pro zobrazení seznamu pojištěnců
+// Stránka s formulářem pro přidání nebo úpravu pojištěnce včetně jeho pojištění
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
