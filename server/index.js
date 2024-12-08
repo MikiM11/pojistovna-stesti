@@ -323,10 +323,31 @@ app.delete("/api/insurances/:id", async (req, res) => {
 // Vrátí všechny typy pojištění
 app.get("/api/insuranceTypes", async (req, res) => {
   try {
-    const insuranceTypes = await InsuranceType.find();
+    const insuranceTypes = await InsuranceType.aggregate([
+      {
+        $lookup: {
+          from: "insurances", // Kolekce pojištění
+          localField: "_id", // Propojení na základě ID typu pojištění
+          foreignField: "type", // Pole v kolekci pojištění
+          as: "insurances", // Název výsledného pole
+        },
+      },
+      {
+        $addFields: {
+          insuranceCount: { $size: "$insurances" }, // Přidání pole s počtem pojištění
+        },
+      },
+      {
+        $project: {
+          insurances: 0, // Skryjeme pole `insurances`
+        },
+      },
+    ]);
+
     res.json(insuranceTypes);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Chyba při načítání typů pojištění:", err);
+    res.status(500).json({ message: "Chyba při načítání typů pojištění." });
   }
 });
 

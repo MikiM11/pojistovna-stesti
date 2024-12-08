@@ -7,7 +7,7 @@ import { Spinner } from "../components/Spinner"; // Import komponenty pro zobraz
 import { apiGet } from "../utils/api"; // Importování funkce pro načítání dat z API
 
 function InsuranceType() {
-  const [insuranceTypes, setInsuranceTypes] = useState([]);
+  const [insuranceTypes, setInsuranceTypes] = useState([]); // State pro uložení dat z API
   const [error, setError] = useState(null); // State pro chybovou hlášku
   const [isLoading, setIsLoading] = useState(true); // State pro načítání dat - zobrazení spinneru
   const navigate = useNavigate();
@@ -54,28 +54,30 @@ function InsuranceType() {
       )}
       {!error && (
         <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Název</th>
-              <th className="text-end">Akce</th> {/* Sloupec pro tlačítko */}
+        <thead>
+          <tr>
+            <th>Název</th>
+            <th>Uzavřeno pojištění</th> {/* Přidání nového sloupce */}
+            <th className="text-end">Akce</th>
+          </tr>
+        </thead>
+        <tbody>
+          {insuranceTypes.map((insuranceType) => (
+            <tr key={insuranceType._id}>
+              <td>{insuranceType.name}</td>
+              <td>{insuranceType.insuranceCount || 0}</td> {/* Zobrazení počtu pojištění */}
+              <td className="text-end">
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() => handleEditInsuranceType(insuranceType._id)}
+                >
+                  Upravit
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {insuranceTypes.map((insuranceType) => (
-              <tr key={insuranceType._id}>
-                <td>{insuranceType.name}</td>
-                <td className="text-end">
-                  <button
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={() => handleEditInsuranceType(insuranceType._id)}
-                  >
-                    Upravit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
       )}
       {!isLoading && !error && insuranceTypes.length === 0 && (
         <p>Žádné typy pojištění nejsou k dispozici.</p>

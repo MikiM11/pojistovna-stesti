@@ -1,14 +1,16 @@
+// KOMPONENTA PRO ZOBRAZENÍ SEZNAMU POJIŠTĚNÍ
+
 import React, { useState, useEffect } from "react";
-import { FlashMessage } from "../components/FlashMessage";
-import { Spinner } from "../components/Spinner";
-import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils";
-import { useNavigate } from "react-router-dom";
+import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro zobrazení chybové hlášky
+import { Spinner } from "../components/Spinner"; // Import komponenty pro zobrazení spinneru
+import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils"; // Importování funkcí pro načítání dat z API
+import { useNavigate } from "react-router-dom"; // Hook pro navigaci
 
 function InsuranceList() {
   const navigate = useNavigate();
-  const [insurances, setInsurances] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [insurances, setInsurances] = useState([]); // State pro uložení dat z API
+  const [error, setError] = useState(null); // State pro chybovou hlášku
+  const [isLoading, setIsLoading] = useState(true); // State pro načítání dat - zobrazení spinneru
   const [type, setType] = useState(""); // Filtrování podle typu
   const [insuredName, setInsuredName] = useState(""); // Filtrování podle jména
   const [page, setPage] = useState(1); // Aktuální stránka
@@ -131,14 +133,14 @@ function InsuranceList() {
                 <td>{new Date(insurance.validFrom).toLocaleDateString()}</td>
                 <td>{new Date(insurance.validTo).toLocaleDateString()}</td>
                 <td>
-        {/* Tlačítko pro úpravu */}
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => handleEditClick(insurance.insured._id)}
-        >
-          <i className="bi bi-pencil"></i>
-        </button>
-      </td>
+                  <button // Tlačítko pro úpravu
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => handleEditClick(insurance.insured._id)}
+                  >
+                    {" "}
+                    Upravit
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -162,20 +164,24 @@ function InsuranceList() {
                 Předchozí
               </button>
             </li>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item ${pageNumber === page ? "active" : ""}`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(pageNumber)}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (pageNumber) => (
+                <li
+                  key={pageNumber}
+                  className={`page-item ${pageNumber === page ? "active" : ""}`}
                 >
-                  {pageNumber}
-                </button>
-              </li>
-            ))}
-            <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(pageNumber)}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>
+              )
+            )}
+            <li
+              className={`page-item ${page === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => handlePageChange(page + 1)}
