@@ -62,15 +62,17 @@ function AddInsuredForm() {
       } else {
         // Vytvoření nového pojištěnce
         const createdInsured = await apiPost("insureds", formData);
+  
+        // Přesměrování na stránku úprav nového pojištěnce
+        navigate(`/upravit-pojistence/${createdInsured._id}`);
         setFlashMessage({
           message: "Nový pojištěnec byl úspěšně přidán.",
           type: "success",
         });
-        setFormData({ ...formData, id: createdInsured.id }); // Uloží ID nového pojištěnce
       }
     } catch (error) {
       setFlashMessage({
-        message: error.message || "Chyba při ukládání dat.",
+        message: error.response?.data?.message || "Chyba při ukládání dat.",
         type: "danger",
       });
     }

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { FlashMessage } from "../components/FlashMessage";
 import { Spinner } from "../components/Spinner";
 import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils";
+import { useNavigate } from "react-router-dom";
 
 function InsuranceList() {
+  const navigate = useNavigate();
   const [insurances, setInsurances] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +62,10 @@ function InsuranceList() {
     setType("");
     setInsuredName("");
     setPage(1);
+  };
+
+  const handleEditClick = (insuredID) => {
+    navigate(`/upravit-pojistence/${insuredID}`);
   };
 
   return (
@@ -124,6 +130,15 @@ function InsuranceList() {
                 <td>{insurance.subject}</td>
                 <td>{new Date(insurance.validFrom).toLocaleDateString()}</td>
                 <td>{new Date(insurance.validTo).toLocaleDateString()}</td>
+                <td>
+        {/* Tlačítko pro úpravu */}
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => handleEditClick(insurance.insured._id)}
+        >
+          <i className="bi bi-pencil"></i>
+        </button>
+      </td>
               </tr>
             ))}
           </tbody>
