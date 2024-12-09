@@ -116,12 +116,12 @@ app.get("/api/insureds", async (req, res) => {
       .skip(offset)
       .limit(limitNum)
       .populate({
-        path: "insurances", // Načte pojištění
+        path: "insurances", // Načte pojištění z jiné kolekce
         populate: { path: "type" }, // Načte typ pojištění
       });
 
-    const totalRecords = await Insured.countDocuments(filter);
-    const totalPages = Math.ceil(totalRecords / limitNum);
+    const totalRecords = await Insured.countDocuments(filter); // Celkový počet záznamů
+    const totalPages = Math.ceil(totalRecords / limitNum); // Celkový počet stránek
 
     res.json({
       data: insureds, // Kompletní pojištěnci s detaily pojištění
@@ -210,7 +210,7 @@ app.get("/api/insurances", async (req, res) => {
     const filter = {};
 
     // Filtrování podle typu pojištění
-    if (type && mongoose.Types.ObjectId.isValid(type)) {
+    if (type && mongoose.Types.ObjectId.isValid(type)) { // Ověření, zda je ID validní ObjectId - musí být ObjectId, jinak se neprovede filtr
       filter.type = type; // Předpokládá validní ObjectId
     }
 
@@ -218,7 +218,7 @@ app.get("/api/insurances", async (req, res) => {
     if (insuredName) {
       const insureds = await Insured.find({
         $or: [
-          { firstName: { $regex: insuredName, $options: "i" } },
+          { firstName: { $regex: insuredName, $options: "i" } }, // Hledá v poli `firstName` s daným regulárním výrazem i znamená, že je to case-insensitive
           { lastName: { $regex: insuredName, $options: "i" } },
         ],
       }).select("_id");
@@ -226,9 +226,9 @@ app.get("/api/insurances", async (req, res) => {
     }
 
     // Stránkování
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
-    const offset = (pageNum - 1) * limitNum;
+    const pageNum = parseInt(page, 10); // Číslo stránky
+    const limitNum = parseInt(limit, 10); // Limit záznamů na stránku
+    const offset = (pageNum - 1) * limitNum; // Offset pro stránkování - počet záznamů, které se mají přeskočit
 
     // Načtení pojištění
     const insurances = await Insurance.find(filter)
@@ -238,8 +238,8 @@ app.get("/api/insurances", async (req, res) => {
       .populate("type");
 
     // Celkový počet záznamů
-    const totalRecords = await Insurance.countDocuments(filter);
-    const totalPages = Math.ceil(totalRecords / limitNum);
+    const totalRecords = await Insurance.countDocuments(filter); // Počet záznamů dle filtru
+    const totalPages = Math.ceil(totalRecords / limitNum); // Celkový počet stránek
 
     // Odpověď
     res.json({
@@ -308,7 +308,7 @@ app.put("/api/insurances/:id", async (req, res) => {
 // Smaže pojistku podle ID
 app.delete("/api/insurances/:id", async (req, res) => {
   try {
-    const deletedInsurance = await Insurance.findByIdAndDelete(req.params.id);
+    const deletedInsurance = await Insurance.findByIdAndDelete(req.params.id); // Smaže pojištění
     if (deletedInsurance == null) {
       return res.status(404).json({ message: "Pojištění nenalezeno" });
     }
