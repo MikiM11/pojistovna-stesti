@@ -13,7 +13,7 @@ function App() {
     <Router>
       <div className="app-container">
         <header className="page-header">
-          <h1>Pojišťovna Štěstí</h1>
+          <h1>Pojišťovna Štěstí - evidence pojištěnců</h1>
           <i className="bi bi-umbrella" title="Pojišťovna Štěstí"></i>
         </header>
         <Navigation />

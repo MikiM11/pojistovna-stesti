@@ -21,7 +21,7 @@ export const fetchInsurances = async ({ type, insuredName, page = 1, limit = 10 
 // Načtení typů pojištění
 export const fetchInsuranceTypes = async () => {
   try {
-    const data = await apiGet("insuranceTypes"); // Správný endpoint
+    const data = await apiGet("insuranceTypes");
     return data;
   } catch (error) {
     throw new Error("Nepodařilo se načíst typy pojištění.");
