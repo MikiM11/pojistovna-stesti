@@ -1,1 +1,4 @@
-# Testovací projekt k rekvalifikačnímu kurzu 
+# Evidence pojištěnců
+## Testovací projekt k rekvalifikačnímu kurzu Tvorba www aplikací v JavaScript
+
+
