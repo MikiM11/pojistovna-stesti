@@ -1,3 +1,7 @@
+//  Hlavní komponenta aplikace Pojišťovna Štěstí.
+// Zajišťuje nastavení routeru, definici tras a základní strukturu stránky.
+
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import InsuredList from "./pages/InsuredList";    // Import stránky s pojištěnci
@@ -6,7 +10,7 @@ import InsuranceType from "./pages/InsuranceType"; // Import stránky s typy poj
 import AddInsuredForm from "./pages/AddInsuredForm"; // Import stránky s formulářem pro přidání pojištěnce
 import AddInsuranceType from "./pages/AddInsuranceType"; // Import stránky s formulářem pro přidání typu pojištění
 import Navigation from "./components/Navigation"; // Import navigace
-import "./App.css";
+import "./App.css"; //Globální styly aplikace
 
 function App() {
   return (

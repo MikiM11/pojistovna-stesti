@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FlashMessage } from "../components/FlashMessage"; // Import komponenty pro zobrazení chybové hlášky
 import { Spinner } from "../components/Spinner"; // Import komponenty pro zobrazení spinneru
-import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils"; // Importování funkcí pro načítání dat z API
+import { fetchInsurances, fetchInsuranceTypes } from "../utils/insuranceUtils"; // Importování funkcí pro filtrování a načítání dat
 import { useNavigate } from "react-router-dom"; // Hook pro navigaci
 
 function InsuranceList() {

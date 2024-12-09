@@ -1,8 +1,11 @@
+// Komponenta formuláře pro přidání pojištění
+
 import React, { useState, useEffect } from "react";
-import { apiPost, apiGet } from "../utils/api";
-import FlashMessage from "../components/FlashMessage";
+import { apiPost, apiGet } from "../utils/api"; // Import funkce pro volání API
+import FlashMessage from "../components/FlashMessage"; // Import komponenty pro flash zprávy
 
 function AddInsuranceForm({ insuredId, onInsuranceAdded }) {
+  //Nastavení prázdného formuláře
   const [formData, setFormData] = useState({
     type: "",
     amount: "",
@@ -13,7 +16,7 @@ function AddInsuranceForm({ insuredId, onInsuranceAdded }) {
   const [insuranceTypes, setInsuranceTypes] = useState([]); // Stav pro typy pojištění
   const [isLoading, setIsLoading] = useState(true); // Stav pro spinner
   const [error, setError] = useState(null); // Stav pro chyby
-  const [flashMessage, setFlashMessage] = useState(null);
+  const [flashMessage, setFlashMessage] = useState(null); // Stav pro flash zprávy
 
   useEffect(() => {
     // Načtení typů pojištění z API
@@ -30,10 +33,12 @@ function AddInsuranceForm({ insuredId, onInsuranceAdded }) {
     loadInsuranceTypes();
   }, []);
 
+  // Funkce pro změnu stavu formuláře při změně hodnoty v poli
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Funkce pro odeslání formuláře
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -53,6 +58,7 @@ function AddInsuranceForm({ insuredId, onInsuranceAdded }) {
     }
   };
 
+  // Vykreslení komponenty  
   return (
     <div className="mt-4">
       <h4>Přidat pojištění</h4>

@@ -1,3 +1,5 @@
+//komponenta pro zobrazení načítání - spinneru (když se načítají data) - podle bootstrapu
+
 import React from "react";
 
 const Spinner = () => {

@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiGet, apiPost, apiPut, apiDelete } from "../utils/api";
-import FlashMessage from "../components/FlashMessage";
-import { Spinner } from "../components/Spinner";
-import AddInsuranceForm from "../components/AddInsuranceForm";
+import { apiGet, apiPost, apiPut, apiDelete } from "../utils/api"; // Funkce pro práci s API
+import FlashMessage from "../components/FlashMessage"; // Komponenta pro zobrazení flash zpráv
+import { Spinner } from "../components/Spinner"; // Komponenta spinneru
+import AddInsuranceForm from "../components/AddInsuranceForm"; // Komponenta pro přidání pojištění
 
 function AddInsuredForm() {
   const { id } = useParams(); // Získání ID pojištěnce z URL parametrů
   const navigate = useNavigate(); // Navigace zpět po úspěšné akci
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // Stav formuláře pro údaje pojištěnce
     firstName: "",
     lastName: "",
     street: "",
@@ -87,7 +87,7 @@ function AddInsuredForm() {
           ...formData,
           insurances: formData.insurances.filter((id) => id !== insuranceId),
         };
-        await apiPut(`insureds/${formData._id}`, updatedInsured);
+        await apiPut(`insureds/${formData._id}`, updatedInsured); // Aktualizace dat pojištěnce
 
         // Krok 2: Smazání samotného pojištění
         await apiDelete(`insurances/${insuranceId}`);
@@ -121,7 +121,7 @@ function AddInsuredForm() {
 
     if (window.confirm("Opravdu chcete tohoto pojištěnce smazat?")) {
       try {
-        await apiDelete(`insureds/${id}`);
+        await apiDelete(`insureds/${id}`); // Smazání pojištěnce
         setFlashMessage({
           message: "Pojištěnec byl úspěšně smazán.",
           type: "success",

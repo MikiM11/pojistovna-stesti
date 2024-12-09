@@ -1,17 +1,17 @@
-// Import API utility
-import { apiGet, apiPost, apiPut, apiDelete } from "./api"; 
+// Soubor obsahuje funkce pro pro filtrování a práci s pojištěním (načtení, přidání, úprava, odstranění)
+import { apiGet, apiPost, apiPut, apiDelete } from "./api";  // Import funkcí pro práci s API
 
 // Načtení seznamu pojištění s podporou filtrování a stránkování
 export const fetchInsurances = async ({ type, insuredName, page = 1, limit = 10 } = {}) => {
   try {
     // Sestavení dotazovacího řetězce
     const params = new URLSearchParams();
-    if (type) params.append("type", type);
-    if (insuredName) params.append("insuredName", insuredName);
-    params.append("page", page);
-    params.append("limit", limit);
+    if (type) params.append("type", type); //Přidání typu pojištění do dotazovacího řetězce
+    if (insuredName) params.append("insuredName", insuredName); //Přidání jména pojištěného do dotazovacího řetězce
+    params.append("page", page); //Přidání čísla stránky do dotazovacího řetězce
+    params.append("limit", limit); //Přidání limitu záznamů na stránku do dotazovacího řetězce
 
-    const data = await apiGet(`insurances?${params.toString()}`);
+    const data = await apiGet(`insurances?${params.toString()}`); //Získání dat z API
     return data;
   } catch (error) {
     throw new Error("Nepodařilo se načíst seznam pojištění.");

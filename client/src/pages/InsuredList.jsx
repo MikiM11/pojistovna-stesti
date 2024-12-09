@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Přidání navigace
-import { FlashMessage } from "../components/FlashMessage";
-import { Spinner } from "../components/Spinner";
-import { apiGet } from "../utils/api";
+import { FlashMessage } from "../components/FlashMessage"; // Přidání flash message
+import { Spinner } from "../components/Spinner"; // Přidání spinneru
+import { apiGet } from "../utils/api"; // Přidání funkce pro GET request
 
 function InsuredList() {
   const [insureds, setInsureds] = useState([]); // Pojištěnci načtení z API
