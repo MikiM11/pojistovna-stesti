@@ -1,6 +1,6 @@
 # Pojišťovna Štěstí
 
-Testovací projekt k rekvalifikačnímu kurzu "Tvorba www aplikací v JavaScript - ITNetwork.cz"  
+Miki - Gerlašisnký - Testovací projekt k rekvalifikačnímu kurzu "Tvorba www aplikací v JavaScript - ITNetwork.cz"  
 Webová aplikace pro správu pojištěnců, pojištění a typů pojištění. Umožňuje evidenci pojištěnců, přiřazení pojištění a správu typů pojištění.
 
 ## Funkcionalita
